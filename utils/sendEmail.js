@@ -1,39 +1,32 @@
 
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const sendEmail = async (email, resetLink) => {
     try {
-        // Create transporter
         const transporter = nodemailer.createTransport({
             service: "gmail",
-            host: process.env.EMAIL_HOST,
-            port: process.env.EMAIL_PORT,
-            secure: true, // true for 465, false for other ports
             auth: {
                 user: process.env.EMAIL,
-                pass: process.env.EMAIL_PASSWORD,
-            },
+                pass: process.env.EMAIL_PASSWORD
+            }
         });
 
-        // Email options
-        const mailOptions = {
+        await transporter.sendMail({
             from: process.env.EMAIL,
             to: email,
-            subject: 'Password Reset Request',
+            subject: "Password Reset Link",
             html: `
-                <h2>Password Reset Link</h2>
-                <h3>You requested a password reset from NodeJs Password Reset Flow.<br>Click the link below to reset your password:</h3>
-                <a href="${resetLink}">${resetLink}</a>
-                <p>This link will expire in 15 minutes.</p>`,
-        };
+        <p>You requested a password reset from NodeJs Password Reset Flow.</p>
+        <p>Click the link below to reset your password:</p>
+        <a href="${resetLink}">${resetLink}</a>
+        <p>This link expires in 15 minutes.</p>`
+        });
 
-        // Send email
-        await transporter.sendMail(mailOptions);
-        console.log('Password reset email sent successfully');
-    }
-    catch (error) {
-        console.error('Error sending email:', error);
-        throw new Error('Email could not be sent');
+        return true;
+
+    } catch (error) {
+        console.error("Email sending failed:", error.message);
+        return false;
     }
 };
 

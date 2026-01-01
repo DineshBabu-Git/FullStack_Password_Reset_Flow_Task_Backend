@@ -62,11 +62,11 @@ exports.forgotPassword = async (req, res) => {
     user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes
     await user.save();
 
-    const resetLink = `${process.env.Frontend_URL}/reset-password/${resetToken}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     await sendEmail(email, resetLink);
 
-    res.json({ message: "Reset link sent to email" });
+    res.json({ message: "Reset link sent to Email" });
 };
 
 // VALIDATE TOKEN
@@ -79,10 +79,10 @@ exports.validateToken = async (req, res) => {
     });
 
     if (!user) {
-        return res.status(400).json({ message: "Invalid or expired token" });
+        return res.status(400).json({ message: "Invalid or Expired Token" });
     }
 
-    res.json({ message: "Token valid" });
+    res.json({ message: "Token Valid" });
 };
 
 // RESET PASSWORD
@@ -95,7 +95,7 @@ exports.resetPassword = async (req, res) => {
     });
 
     if (!user) {
-        return res.status(400).json({ message: "Invalid or expired token" });
+        return res.status(400).json({ message: "Invalid or Expired Token" });
     }
 
     user.password = await bcrypt.hash(newPassword, 10);
@@ -104,5 +104,5 @@ exports.resetPassword = async (req, res) => {
 
     await user.save();
 
-    res.json({ message: "Password reset successful" });
+    res.json({ message: "Password Reset Successful" });
 };
