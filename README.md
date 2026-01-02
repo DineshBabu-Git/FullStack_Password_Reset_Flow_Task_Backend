@@ -28,9 +28,11 @@ This project demonstrates real-world authentication flows including user registr
 
 -----------------------------------------------------------------------------------
 
-## ⚠️ Email Service Note (Important)
+## Email Service Note (Important)
 
-Gmail SMTP is blocked on Render free tier, which causes email timeouts and server error in production.
+**⚠️ Why Mailtrap is Used Instead of Gmail**
+
+Gmail SMTP is blocked on Render free tier due to its new updated policies, which causes email timeouts and 500 server error in production even after setting an Gmail App Password as well as 2-step Verification.
 
 ✅ Mailtrap SMTP is used instead for reliable testing and deployment.
 Mailtrap captures emails in a sandbox inbox, making it perfect for development and demo purposes.
@@ -100,6 +102,8 @@ VITE_API_URL=http://localhost:5000
 - Backend: Render
 - Database: MongoDB Atlas
 - Email Service: Mailtrap (SMTP)
+
+Environment variables are configured directly in Render and Netlify dashboards.
 
 -----------------------------------------------------------------------------------
 
