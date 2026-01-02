@@ -28,6 +28,15 @@ This project demonstrates real-world authentication flows including user registr
 
 -----------------------------------------------------------------------------------
 
+## ⚠️ Email Service Note (Important)
+
+Gmail SMTP is blocked on Render free tier, which causes email timeouts and server error in production.
+
+✅ Mailtrap SMTP is used instead for reliable testing and deployment.
+Mailtrap captures emails in a sandbox inbox, making it perfect for development and demo purposes.
+
+-----------------------------------------------------------------------------------
+
 ## Installation & Setup
 
 1. Clone the repository:
@@ -64,6 +73,33 @@ This project demonstrates real-world authentication flows including user registr
    npm run dev
    ```
    Frontend runs at --> `http://localhost:5173`
+
+-----------------------------------------------------------------------------------
+
+## Environment Variables
+
+**Backend .env (not committed):**
+
+MONGO_URI=your_mongodb_uri
+MAILTRAP_HOST=your_mailtrap_host
+MAILTRAP_PORT=your_mailtrap_port
+MAILTRAP_USER=your_mailtrap_user
+MAILTRAP_PASS=your_mailtrap_password
+EMAIL=your_email_address (for sending emails)
+FRONTEND_URL=http://localhost:5173
+
+**Frontend .env (not committed):**
+
+VITE_API_URL=http://localhost:5000
+
+-----------------------------------------------------------------------------------
+
+## Deployment
+
+- Frontend: Netlify
+- Backend: Render
+- Database: MongoDB Atlas
+- Email Service: Mailtrap (SMTP)
 
 -----------------------------------------------------------------------------------
 
