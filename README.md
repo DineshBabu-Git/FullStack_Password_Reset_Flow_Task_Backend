@@ -32,10 +32,9 @@ This project demonstrates real-world authentication flows including user registr
 
 **⚠️ Why Mailtrap is Used Instead of Gmail**
 
-Gmail SMTP is blocked on Render free tier due to its new updated policies, which causes email timeouts and 500 server error in production even after setting an Gmail App Password as well as 2-step Verification.
+Gmail SMTP is blocked on Render free tier, which causes email timeouts and 500 server error in production even after setting an Gmail App Password as well as 2-step Verification.
 
-✅ Mailtrap SMTP is used instead for reliable testing and deployment.
-Mailtrap captures emails in a sandbox inbox, making it perfect for development and demo purposes.
+✅ So here Mailtrap Email API is used instead for reliable testing and deployment which making it perfect for development and demo purposes.
 
 -----------------------------------------------------------------------------------
 
