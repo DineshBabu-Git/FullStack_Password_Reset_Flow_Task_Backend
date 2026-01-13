@@ -49,24 +49,38 @@ exports.login = async (req, res) => {
 
 // FORGOT PASSWORD
 exports.forgotPassword = async (req, res) => {
-    const { email } = req.body;
+    try {
+        const { email } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const resetToken = crypto.randomBytes(32).toString("hex");
+
+        user.resetToken = resetToken;
+        user.resetTokenExpiry = Date.now() + 15 * 60 * 1000;
+        await user.save();
+
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+        const emailSent = await sendEmail(email, resetLink);
+
+        if (!emailSent) {
+            return res.status(500).json({ message: "Failed to send reset email" });
+        }
+
+        res.json({ message: "Password reset link sent successfully" });
+
+    } catch (error) {
+        console.error("Forgot password error:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-
-    const resetToken = crypto.randomBytes(32).toString("hex");
-
-    user.resetToken = resetToken;
-    user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes
-    await user.save();
-
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-
-    await sendEmail(email, resetLink);
-
-    res.json({ message: "Reset link sent to Email" });
 };
 
 // VALIDATE TOKEN
