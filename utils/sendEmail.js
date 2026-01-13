@@ -14,7 +14,7 @@ const sendEmail = async (email, resetLink) => {
         });
 
         await transporter.sendMail({
-            from: `"Password Reset" <no-reply@passwordreset.com>`,
+            from: `"Password Reset" <info@demomailtrap.co>`,
             to: email,
             subject: "Reset Your Password",
             html: `
