@@ -1,30 +1,36 @@
 
-const nodemailer = require("nodemailer");
+const axios = require("axios");
 
 const sendEmail = async (email, resetLink) => {
     try {
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.EMAIL_PASSWORD
+        await axios.post(
+            "https://api.resend.com/emails",
+            {
+                from: "Password Reset <onboarding@resend.dev>",
+                to: email,
+                subject: "Password Reset Link",
+                html: `
+          <p>You requested a password reset.</p>
+          <p>Click the link below to reset your password:</p>
+          <a href="${resetLink}">${resetLink}</a>
+          <p>This link expires in 15 minutes.</p>
+        `
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+                    "Content-Type": "application/json"
+                }
             }
-        });
+        );
 
-        await transporter.sendMail({
-            from: process.env.EMAIL,
-            to: email,
-            subject: "Password Reset Link",
-            html: `<h3>You requested a password reset from NodeJs Password Reset Flow.</h3>
-      <p>Click the link below to reset your password:</p>
-      <a href="${resetLink}">${resetLink}</a>
-      <p>This link will expire in 15 minutes.</p>`
-        });
-
+        console.log(`Password reset email sent to ${email}`);
         return true;
-    }
-    catch (error) {
-        console.error("Email sending failed:", error.message);
+    } catch (error) {
+        console.error(
+            "Resend email failed:",
+            error.response?.data || error.message
+        );
         return false;
     }
 };
