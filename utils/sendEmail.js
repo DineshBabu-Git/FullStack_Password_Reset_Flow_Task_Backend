@@ -1,36 +1,26 @@
 
-const axios = require("axios");
+const sgMail = require("@sendgrid/mail");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmail = async (email, resetLink) => {
     try {
-        await axios.post(
-            "https://api.resend.com/emails",
-            {
-                from: "Password Reset <onboarding@resend.dev>",
-                to: email,
-                subject: "Password Reset Link",
-                html: `
-          <p>You requested a password reset.</p>
-          <p>Click the link below to reset your password:</p>
-          <a href="${resetLink}">${resetLink}</a>
-          <p>This link expires in 15 minutes.</p>
-        `
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
+        await sgMail.send({
+            to: email, // ANY USER EMAIL
+            from: process.env.SENDGRID_SENDER_EMAIL, // VERIFIED EMAIL
+            subject: "Password Reset Link",
+            html: `
+        <p>You requested a password reset.</p>
+        <p>Click the link below:</p>
+        <a href="${resetLink}">${resetLink}</a>
+        <p>This link expires in 15 minutes.</p>
+      `
+        });
 
-        console.log(`Password reset email sent to ${email}`);
+        console.log("Email sent to:", email);
         return true;
     } catch (error) {
-        console.error(
-            "Resend email failed:",
-            error.response?.data || error.message
-        );
+        console.error("SendGrid Email Error:", error.message);
         return false;
     }
 };
