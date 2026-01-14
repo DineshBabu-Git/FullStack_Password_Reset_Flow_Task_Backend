@@ -1,7 +1,7 @@
 
 const nodemailer = require("nodemailer");
 
-const sendEmail = async (email, link) => {
+const sendEmail = async (email, resetLink) => {
     try {
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -17,7 +17,7 @@ const sendEmail = async (email, link) => {
             subject: "Password Reset Link",
             html: `<h3>You requested a password reset from NodeJs Password Reset Flow.</h3>
       <p>Click the link below to reset your password:</p>
-      <a href="${link}">${link}</a>
+      <a href="${resetLink}">${resetLink}</a>
       <p>This link will expire in 15 minutes.</p>`
         });
 
