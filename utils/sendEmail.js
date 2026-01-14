@@ -1,47 +1,30 @@
 
-const axios = require("axios");
+const nodemailer = require("nodemailer");
 
-const sendEmail = async (email, resetLink) => {
+const sendEmail = async (email, link) => {
     try {
-        const response = await axios.post(
-            "https://send.api.mailtrap.io/api/send",
-            {
-                from: {
-                    email: process.env.MAILTRAP_SENDER,
-                    name: "Password Reset App"
-                },
-                to: [
-                    {
-                        email: email
-                    }
-                ],
-                subject: "Reset Your Password",
-                html: `
-                    <h3>Password Reset Request</h3>
-                    <p>You requested to reset your password.</p>
-                    <p>
-                        <a href="${resetLink}" target="_blank">
-                            Click here to reset your password
-                        </a>
-                    </p>
-                    <p>This link will expire in 15 minutes.</p>
-                `
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.MAILTRAP_API_TOKEN}`,
-                    "Content-Type": "application/json"
-                }
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.EMAIL_PASSWORD
             }
-        );
+        });
 
-        return response.status === 200;
+        await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: "Password Reset Link",
+            html: `<h3>You requested a password reset from NodeJs Password Reset Flow.</h3>
+      <p>Click the link below to reset your password:</p>
+      <a href="${link}">${link}</a>
+      <p>This link will expire in 15 minutes.</p>`
+        });
 
-    } catch (error) {
-        console.error(
-            "Email sending failed:",
-            error.response?.data || error.message
-        );
+        return true;
+    }
+    catch (error) {
+        console.error("Email sending failed:", error.message);
         return false;
     }
 };
