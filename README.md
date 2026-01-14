@@ -3,7 +3,7 @@
 
 This is a FullStack web application implementing a secure password reset flow with email verification, built using React, Node.js, Express, MongoDB, and styled with TailwindCSS.
 
-This project demonstrates real-world authentication flows including user registration, login, forgot password, email-based password reset with expiry, and secure password storage.
+This project demonstrates real-world authentication flows including user registration, login, forgot password, email-based password reset with expiry, and secure password storage. This Includes real-world email-based password recovery using SendGrid.
 
 -----------------------------------------------------------------------------------
 
@@ -22,19 +22,19 @@ This project demonstrates real-world authentication flows including user registr
 
 ## Tech Stack
 
-- **Backend**: Node.js, Express, MongoDB (Mongoose), Nodemailer (Email service), bcrypt (Password hashing), crypto (Secure token generation)
-
 - **Frontend**: React (Vite), TailwindCSS, React Router DOM
+
+- **Backend**: Node.js, Express, MongoDB (Mongoose), SendGrid (Transactional Emails), bcrypt (Password hashing), crypto (Secure token generation)
 
 -----------------------------------------------------------------------------------
 
 ## Email Service Note (Important)
 
-**⚠️ Why Mailtrap is Used Instead of Gmail**
+**⚠️ Why SendGrid is Used Instead of Gmail**
 
 Gmail SMTP is blocked on Render free tier, which causes email timeouts and 500 server error in production even after setting an Gmail App Password as well as 2-step Verification.
 
-✅ So here Mailtrap Email API is used instead for reliable testing and deployment which making it perfect for development and demo purposes.
+✅ So here SendGrid Email API is used instead for reliable testing and deployment which making it perfect for development and demo purposes.
 
 -----------------------------------------------------------------------------------
 
@@ -81,12 +81,10 @@ Gmail SMTP is blocked on Render free tier, which causes email timeouts and 500 s
 
 **Backend .env (not committed):**
 
-- MONGO_URI=your_mongodb_uri
-- MAILTRAP_HOST=your_mailtrap_host
-- MAILTRAP_PORT=your_mailtrap_port
-- MAILTRAP_USER=your_mailtrap_user
-- MAILTRAP_PASS=your_mailtrap_password
-- EMAIL=your_email_address (for sending emails)
+- PORT=5000
+- MONGO_URI=your_mongodb_connection_string
+- SENDGRID_API_KEY=your_sendgrid_api_key
+- FROM_EMAIL=your_verified_sender_email
 - FRONTEND_URL=http://localhost:5173
 
 **Frontend .env (not committed):**
@@ -100,7 +98,7 @@ Gmail SMTP is blocked on Render free tier, which causes email timeouts and 500 s
 - Frontend: Netlify
 - Backend: Render
 - Database: MongoDB Atlas
-- Email Service: Mailtrap (SMTP)
+- Email Service: SendGrid (A leading cloud-based email delivery platform)
 
 Environment variables are configured directly in Render and Netlify dashboards.
 
