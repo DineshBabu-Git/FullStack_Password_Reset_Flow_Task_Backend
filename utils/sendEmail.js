@@ -12,7 +12,7 @@ const sendEmail = async (email, resetLink) => {
             html: `
         <h3>You requested a password reset.</h3>
         <p>Click the link below:</p>
-        <h4><a href="${resetLink}">Password Reset Link</a></h4>
+        <h4><a href="${resetLink}"><u>Password reset link</u></a></h4>
         <p>This link expires in 15 minutes.</p>
       `
         });
