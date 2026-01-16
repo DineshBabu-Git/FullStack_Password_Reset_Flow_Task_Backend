@@ -10,9 +10,9 @@ const sendEmail = async (email, resetLink) => {
             from: process.env.SENDGRID_SENDER_EMAIL, // VERIFIED EMAIL
             subject: "Password Reset Link",
             html: `
-        <h3>You requested a password reset.</h3>
+        <h4>You requested a password reset.</h4>
         <p>Click the link below:</p>
-        <h4><a href="${resetLink}"><u>Password reset link</u></a></h4>
+        <h4><a href="${resetLink}" target="_blank"><u>Password Reset link</u></a></h4>
         <p>This link expires in 15 minutes.</p>
       `
         });

@@ -6,45 +6,52 @@ const sendEmail = require("../utils/sendEmail");
 
 // USER REGISTER
 exports.register = async (req, res) => {
-    const { username, email, password } = req.body;
+    try {
+        const { username, email, password } = req.body;
 
-    if (!username || !email || !password) {
-        return res.status(400).json({ message: "All fields are required" });
+        if (!username || !email || !password) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = new User({ username, email, password: hashedPassword });
+        await user.save();
+
+        res.status(201).json({ message: "User registered successfully" });
+
+    } catch (error) {
+        console.error("Register Error:", error);
+        res.status(500).json({ message: "Server error" });
     }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-        return res.status(400).json({ message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({
-        username,
-        email,
-        password: hashedPassword
-    });
-
-    await user.save();
-
-    res.json({ message: "User registered successfully" });
 };
 
 // USER LOGIN
 exports.login = async (req, res) => {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        res.json({ message: "Login successful" });
+
+    } catch (error) {
+        console.error("Login Error:", error);
+        res.status(500).json({ message: "Server error" });
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    res.json({ message: "Login successful" });
 };
 
 // FORGOT PASSWORD
@@ -75,7 +82,7 @@ exports.forgotPassword = async (req, res) => {
             return res.status(500).json({ message: "Failed to send reset email" });
         }
 
-        res.json({ message: "Password reset link sent successfully" });
+        res.json({ message: "Password reset link sent successfully.Please check your Email" });
 
     } catch (error) {
         console.error("Forgot password error:", error);
@@ -101,22 +108,28 @@ exports.validateToken = async (req, res) => {
 
 // RESET PASSWORD
 exports.resetPassword = async (req, res) => {
-    const { token, newPassword } = req.body;
+    try {
+        const { token, newPassword } = req.body;
 
-    const user = await User.findOne({
-        resetToken: token,
-        resetTokenExpiry: { $gt: Date.now() }
-    });
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpiry: { $gt: Date.now() }
+        });
 
-    if (!user) {
-        return res.status(400).json({ message: "Invalid or Expired Token" });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or Expired Token" });
+        }
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.resetToken = null;
+        user.resetTokenExpiry = null;
+
+        await user.save();
+
+        res.json({ message: "Password Reset Successful" });
+
+    } catch (error) {
+        console.error("Password reset error:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    user.resetToken = null;
-    user.resetTokenExpiry = null;
-
-    await user.save();
-
-    res.json({ message: "Password Reset Successful" });
 };
